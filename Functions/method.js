@@ -19,3 +19,18 @@ const MyMath = {
         return num** 3;
     }
 }
+
+const square ={
+    // area: function(a){
+    //     return a*a;
+    // },
+    // perimeter: function(a){
+    //     return 4*a;
+    // }
+    area(side){
+        return side*side;
+    },
+    perimeter(side){
+        return side* 4;
+    }
+}
