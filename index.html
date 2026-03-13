@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>30-Day JS Docs Mastery</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f5f4;
+      --bg-info: #e6f1fb;
+      --bg-success: #e1f5ee;
+      --text: #1a1a1a;
+      --text-secondary: #6b7280;
+      --text-info: #185fa5;
+      --text-success: #0f6e56;
+      --border: rgba(0,0,0,0.1);
+      --border-hover: rgba(0,0,0,0.2);
+      --green: #1D9E75;
+      --green-light: #E1F5EE;
+      --blue: #185FA5;
+      --blue-light: #E6F1FB;
+      --purple: #3C3489;
+      --purple-light: #EEEDFE;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1c;
+        --bg-secondary: #2a2a2a;
+        --bg-info: #0c2340;
+        --bg-success: #062820;
+        --text: #f0f0f0;
+        --text-secondary: #9ca3af;
+        --text-info: #7bb8f4;
+        --text-success: #5DCAA5;
+        --border: rgba(255,255,255,0.1);
+        --border-hover: rgba(255,255,255,0.2);
+        --green-light: #062820;
+        --blue-light: #0c2340;
+        --purple-light: #1a1850;
+      }
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem 1rem; }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .stats-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+    .stat-box { flex: 1; padding: 12px; border-radius: var(--radius); background: var(--bg-secondary); border: 0.5px solid var(--border); text-align: center; }
+    .stat-num { font-size: 24px; font-weight: 600; }
+    .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .progress-wrap { background: var(--bg-secondary); border-radius: 999px; height: 8px; margin: 0.75rem 0 0.4rem; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 999px; background: var(--blue); transition: width 0.4s; }
+    .progress-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .phase-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .phase-tab { padding: 6px 16px; border-radius: 999px; border: 0.5px solid var(--border-hover); font-size: 13px; cursor: pointer; background: transparent; color: var(--text-secondary); transition: all 0.15s; font-family: inherit; }
+    .phase-tab.active { background: var(--bg-info); color: var(--text-info); border-color: transparent; font-weight: 500; }
+    .phase-tab:hover:not(.active) { background: var(--bg-secondary); }
+    .phase-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .phase-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 1.25rem; }
+    .day-card { border: 0.5px solid var(--border); border-radius: var(--radius); background: var(--bg); margin-bottom: 8px; overflow: hidden; transition: border-color 0.15s; }
+    .day-card.done { background: var(--bg-success); border-color: transparent; }
+    .day-top { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; user-select: none; }
+    .day-top:hover { background: var(--bg-secondary); }
+    .day-card.done .day-top:hover { background: transparent; }
+    .day-num { min-width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--bg-secondary); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--text-secondary); flex-shrink: 0; }
+    .day-card.done .day-num { background: var(--green-light); color: var(--text-success); border-color: transparent; }
+    .day-info { flex: 1; }
+    .day-title { font-size: 14px; font-weight: 500; }
+    .day-card.done .day-title { color: var(--text-success); }
+    .day-doc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .day-date { font-size: 11px; color: var(--text-secondary); margin-top: 3px; background: var(--bg-secondary); display: inline-block; padding: 2px 8px; border-radius: 999px; border: 0.5px solid var(--border); }
+    .day-card.done .day-date { background: var(--green-light); color: var(--text-success); border-color: transparent; }
+    .today-badge { font-size: 11px; background: #FAEEDA; color: #633806; padding: 2px 8px; border-radius: 999px; margin-left: 5px; }
+    .start-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; padding: 10px 14px; border-radius: var(--radius); background: var(--bg-secondary); border: 0.5px solid var(--border); }
+    .start-row label { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+    .start-row input[type=date] { font-size: 13px; border: 0.5px solid var(--border-hover); border-radius: var(--radius-sm); padding: 5px 10px; background: var(--bg); color: var(--text); font-family: inherit; cursor: pointer; }
+    .end-date { font-size: 13px; color: var(--text-secondary); margin-left: auto; white-space: nowrap; }
+    .day-tags { display: flex; gap: 5px; margin-top: 5px; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; }
+    .tag-read { background: var(--blue-light); color: var(--text-info); }
+    .tag-build { background: var(--green-light); color: var(--text-success); }
+    .expand-btn { font-size: 20px; color: var(--text-secondary); background: none; border: none; cursor: pointer; padding: 0 4px; transition: transform 0.2s; line-height: 1; flex-shrink: 0; }
+    .expand-btn.open { transform: rotate(180deg); }
+    .check-circle { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-hover); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+    .day-card.done .check-circle { background: var(--green); border-color: var(--green); }
+    .check-icon { display: none; }
+    .day-card.done .check-icon { display: block; }
+    .day-expanded { padding: 0 14px 14px 62px; display: none; }
+    .day-expanded.open { display: block; }
+    .section-label { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 5px; }
+    .doc-links { display: flex; flex-direction: column; gap: 4px; }
+    .doc-link { font-size: 13px; color: var(--text-info); text-decoration: none; padding: 6px 10px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: var(--bg-secondary); display: flex; align-items: center; gap: 6px; transition: border-color 0.15s; }
+    .doc-link:hover { border-color: var(--border-hover); }
+    .build-task { font-size: 13px; color: var(--text); padding: 10px 12px; border-radius: var(--radius-sm); background: var(--bg-secondary); border-left: 3px solid var(--green); line-height: 1.6; margin-top: 4px; }
+    .mark-btn { margin-top: 12px; padding: 8px 18px; border-radius: 999px; border: 0.5px solid var(--border-hover); font-size: 13px; cursor: pointer; background: transparent; color: var(--text); transition: all 0.15s; font-family: inherit; }
+    .mark-btn:hover { background: var(--bg-secondary); }
+    @media (max-width: 480px) {
+      .stats-row { gap: 6px; }
+      .stat-num { font-size: 20px; }
+      .day-expanded { padding-left: 14px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>30-Day JS Docs Mastery</h1>
+  <p class="subtitle">Read the docs. Build something. Every single day. Then pure projects.</p>
+
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num" id="s-done">0</div><div class="stat-label">days done</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-streak">0</div><div class="stat-label">streak</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-pct">0%</div><div class="stat-label">complete</div></div>
+  </div>
+
+  <div class="progress-wrap"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">0 of 30 days complete</div>
+
+  <div class="start-row">
+    <label>Your start date</label>
+    <input type="date" id="start-date" />
+    <span class="end-date" id="end-date"></span>
+  </div>
+
+  <div class="phase-tabs" id="phase-tabs"></div>
+  <div id="phase-header"></div>
+  <div id="days-list"></div>
+</div>
+
+<script>
+const phases = [
+  {
+    title: "Phase 1 — Core Language (Days 1–10)",
+    subtitle: "The absolute fundamentals. How JS actually thinks.",
+    days: [
+      { title: "Introduction & Hello World", doc: "javascript.info/intro + first-steps", links: [["An Introduction to JavaScript","https://javascript.info/intro"],["Hello World","https://javascript.info/hello-world"],["Code Structure","https://javascript.info/structure"]], build: "Open browser console. Write 5 different console.log() statements about yourself. Your name, age, city, dream job, favorite color." },
+      { title: "Variables, Types & Type Conversion", doc: "javascript.info/variables + types + type-conversions", links: [["Variables","https://javascript.info/variables"],["Data Types","https://javascript.info/types"],["Type Conversions","https://javascript.info/type-conversions"]], build: "Build a tiny bio program. Store your name (string), age (number), isStudent (boolean). Convert age to string, name to number, log all results." },
+      { title: "Operators & Comparisons", doc: "javascript.info/operators + comparison + logical-operators", links: [["Basic Operators & Math","https://javascript.info/operators"],["Comparisons","https://javascript.info/comparison"],["Logical Operators","https://javascript.info/logical-operators"]], build: "Build a number analyzer. Given any number, log: is it positive, negative, or zero? Is it greater than 100? Is it even?" },
+      { title: "Conditionals — if, else, switch", doc: "javascript.info/ifelse + switch", links: [["Conditional Branching: if, ?","https://javascript.info/ifelse"],["The Switch Statement","https://javascript.info/switch"]], build: "Build a simple chatbot in the console. Use if/else to respond to 'hello', 'bye', 'help'. Anything else gets a default reply." },
+      { title: "Loops — while, for, break, continue", doc: "javascript.info/while-for", links: [["Loops: while and for","https://javascript.info/while-for"]], build: "Print a times table for any number using a for loop. Then use while to print only numbers divisible by 3 between 1 and 50." },
+      { title: "Functions — declaration, expression, arrow", doc: "javascript.info/function-basics + function-expressions + arrow-functions", links: [["Functions","https://javascript.info/function-basics"],["Function Expressions","https://javascript.info/function-expressions"],["Arrow Functions","https://javascript.info/arrow-functions-basics"]], build: "Build a mini utility library: formatName(), calculateAge(), isAdult(), greet(). Write each 3 ways: declaration, expression, arrow." },
+      { title: "JavaScript Specials & Debugging", doc: "javascript.info/javascript-specials + debugging-chrome", links: [["JavaScript Specials","https://javascript.info/javascript-specials"],["Debugging in Browser","https://javascript.info/debugging-chrome"]], build: "Go back to any code you wrote this week. Set breakpoints in DevTools. Step through line by line and watch variables change." },
+      { title: "Objects — basics & dot notation", doc: "javascript.info/object + object-copy", links: [["Objects","https://javascript.info/object"],["Object References and Copying","https://javascript.info/object-copy"]], build: "Create a detailed user profile object with 10 properties. Write functions to get fullName, check if over 18, and update the email." },
+      { title: "Object Methods & 'this'", doc: "javascript.info/object-methods + constructor-new", links: [["Object Methods, 'this'","https://javascript.info/object-methods"],["Constructor & 'new'","https://javascript.info/constructor-new"]], build: "Build a BankAccount object with methods: deposit(), withdraw(), getBalance(). Use 'this' to access properties from within methods." },
+      { title: "Arrays — the complete guide", doc: "javascript.info/array + array-methods", links: [["Arrays","https://javascript.info/array"],["Array Methods","https://javascript.info/array-methods"]], build: "Take an array of 10 people with name + age. Use map to get names, filter to get adults, reduce to get average age, sort by age." }
+    ]
+  },
+  {
+    title: "Phase 2 — How JS Really Works (Days 11–20)",
+    subtitle: "The deep internals that separate beginners from pros.",
+    days: [
+      { title: "Destructuring & Spread/Rest", doc: "javascript.info/destructuring-assignment + rest-parameters-spread", links: [["Destructuring Assignment","https://javascript.info/destructuring-assignment"],["Rest parameters & spread","https://javascript.info/rest-parameters-spread"]], build: "Rewrite all your previous object and array code using destructuring. Use spread to merge two objects and two arrays." },
+      { title: "Closures & Scope", doc: "javascript.info/closure + var + global-object", links: [["Variable Scope & Closures","https://javascript.info/closure"],["The old 'var'","https://javascript.info/var"],["Global Object","https://javascript.info/global-object"]], build: "Build a counter using closure. Three independent counters that don't share state. Prove it by incrementing them separately." },
+      { title: "Advanced Functions — call, apply, bind", doc: "javascript.info/call-apply-decorators + bind", links: [["Decorators and forwarding, call/apply","https://javascript.info/call-apply-decorators"],["Function Binding","https://javascript.info/bind"]], build: "Write a multiply function. Use call to run it with different 'this'. Use bind to create a 'double' and 'triple' function pre-set with one argument." },
+      { title: "Prototypes & Inheritance", doc: "javascript.info/prototype-inheritance + function-prototype", links: [["Prototypal Inheritance","https://javascript.info/prototype-inheritance"],["F.prototype","https://javascript.info/function-prototype"],["Native Prototypes","https://javascript.info/native-prototypes"]], build: "Create Animal with eat() and sleep(). Create Dog that inherits and adds bark(). Create Cat with meow(). Use prototype chain, not classes." },
+      { title: "Classes", doc: "javascript.info/class + class-inheritance", links: [["Class Basic Syntax","https://javascript.info/class"],["Class Inheritance","https://javascript.info/class-inheritance"],["Static Properties & Methods","https://javascript.info/static-properties-methods"]], build: "Rewrite your Day 14 prototype code as proper ES6 Classes. Add a static method to Animal that tracks how many animals were created." },
+      { title: "Error Handling", doc: "javascript.info/try-catch + custom-errors", links: [["Error Handling, try…catch","https://javascript.info/try-catch"],["Custom Errors","https://javascript.info/custom-errors"]], build: "Write a parseUserInput() that throws EmptyInputError, TooShortError, InvalidEmailError. Handle each differently in try/catch." },
+      { title: "Promises — the foundation of async", doc: "javascript.info/promise-basics + promise-chaining", links: [["Promise Basics","https://javascript.info/promise-basics"],["Promises Chaining","https://javascript.info/promise-chaining"],["Promise API","https://javascript.info/promise-api"]], build: "Build a fake data fetcher using Promises. Chain 3 promises: fetch user → fetch their posts → fetch comments on first post. Log each step." },
+      { title: "Async/Await", doc: "javascript.info/async-await", links: [["Async/Await","https://javascript.info/async-await"]], build: "Rewrite your Day 17 promise chain using async/await. Fetch real data from https://jsonplaceholder.typicode.com/users/1 and log cleanly." },
+      { title: "Generators & Iterators", doc: "javascript.info/generators + iterable", links: [["Generators","https://javascript.info/generators"],["Iterables","https://javascript.info/iterable"]], build: "Build an infinite ID generator using a generator function. Each call returns the next unique ID. Build a range(start, end) iterable." },
+      { title: "Modules — import & export", doc: "javascript.info/modules-intro + import-export", links: [["Modules Introduction","https://javascript.info/modules-intro"],["Export and Import","https://javascript.info/import-export"],["Dynamic Imports","https://javascript.info/modules-dynamic-imports"]], build: "Split your bank account code into modules: account.js (logic), utils.js (helpers), main.js (runs it). Use proper import/export." }
+    ]
+  },
+  {
+    title: "Phase 3 — Browser & DOM Mastery (Days 21–30)",
+    subtitle: "Make JS interact with the real browser world.",
+    days: [
+      { title: "Browser Environment & DOM Tree", doc: "javascript.info/browser-environment + dom-nodes", links: [["Browser Environment, Specs","https://javascript.info/browser-environment"],["DOM Tree","https://javascript.info/dom-nodes"],["Walking the DOM","https://javascript.info/dom-navigation"]], build: "Open any website. In console, walk the DOM tree manually. Log document.body.children, then children of children. Map the structure." },
+      { title: "Searching & Modifying the DOM", doc: "javascript.info/searching-elements-dom + modifying-document", links: [["Searching: getElement*, querySelector*","https://javascript.info/searching-elements-dom"],["Modifying the Document","https://javascript.info/modifying-document"]], build: "Build a page that dynamically creates 10 profile cards using createElement and appendChild. No HTML cards written — pure JS creates them all." },
+      { title: "Attributes, Styles & Classes", doc: "javascript.info/dom-attributes-and-properties + styles-and-classes", links: [["Attributes and Properties","https://javascript.info/dom-attributes-and-properties"],["Styles and Classes","https://javascript.info/styles-and-classes"]], build: "Build a theme switcher with 4 color themes. Clicking each button changes body background, text color, and button styles using classList.toggle." },
+      { title: "Events — how they really work", doc: "javascript.info/introduction-browser-events + bubbling-and-capturing", links: [["Introduction to Browser Events","https://javascript.info/introduction-browser-events"],["Bubbling and Capturing","https://javascript.info/bubbling-and-capturing"],["Event Delegation","https://javascript.info/event-delegation"]], build: "Build a todo list using event delegation. One event listener on the parent handles clicks on all children. Add 100 items — still just one listener." },
+      { title: "Forms & User Input", doc: "javascript.info/form-elements + focus-blur + forms-submit", links: [["Form Properties and Methods","https://javascript.info/form-elements"],["Focusing: focus/blur","https://javascript.info/focus-blur"],["Form Submission","https://javascript.info/forms-submit"]], build: "Build a full registration form: name (min 3 chars), email (must contain @), password (min 8 chars). Show inline errors. Prevent invalid submit." },
+      { title: "Document & Resource Loading", doc: "javascript.info/onload-ondomcontentloaded + script-async-defer", links: [["Page: DOMContentLoaded, load, beforeunload","https://javascript.info/onload-ondomcontentloaded"],["Scripts: async, defer","https://javascript.info/script-async-defer"]], build: "Build a page preloader. Show a loading spinner until DOM is fully ready. Then fade it out using DOMContentLoaded." },
+      { title: "Fetch API & Network Requests", doc: "javascript.info/fetch + fetch-api", links: [["Fetch","https://javascript.info/fetch"],["Fetch: Abort","https://javascript.info/fetch-abort"],["CORS","https://javascript.info/fetch-crossorigin"]], build: "Build a GitHub user search. Type a username, fetch from api.github.com/users/{username}, show avatar, name, bio, and repo count." },
+      { title: "localStorage, sessionStorage & Cookies", doc: "javascript.info/localstorage + cookie", links: [["localStorage, sessionStorage","https://javascript.info/localstorage"],["Cookies","https://javascript.info/cookie"]], build: "Build a notes app that saves to localStorage. Notes survive page refresh and closing the browser. Add delete button per note." },
+      { title: "Animations & requestAnimationFrame", doc: "javascript.info/css-animations + js-animation", links: [["CSS Animations (JS control)","https://javascript.info/css-animations"],["JavaScript Animations","https://javascript.info/js-animation"]], build: "Animate a ball bouncing across the screen using requestAnimationFrame. Control speed, direction change on wall hit. Pure JS math." },
+      { title: "Day 30 — Full Review + Final Project", doc: "javascript.info/js-misc — the parts you skipped", links: [["WeakMap and WeakSet","https://javascript.info/weakmap-weakset"],["Symbol","https://javascript.info/symbol"],["Proxy and Reflect","https://javascript.info/proxy"]], build: "Build a weather dashboard: fetch from Open-Meteo API (free, no key), store last searched city in localStorage, animate temperature counting up on load." }
+    ]
+  }
+];
+
+let completed = [];
+try { completed = JSON.parse(localStorage.getItem('jsdocs30') || '[]'); } catch(e) {}
+let activePhase = 0;
+let expandedDay = null;
+
+const todayStr = new Date().toISOString().split('T')[0];
+let startDate = localStorage.getItem('jsdocs30_start') || todayStr;
+
+function getDateForDay(dayIndex) {
+  const d = new Date(startDate + 'T00:00:00');
+  d.setDate(d.getDate() + dayIndex);
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function isToday(dayIndex) {
+  const d = new Date(startDate + 'T00:00:00');
+  d.setDate(d.getDate() + dayIndex);
+  return d.toISOString().split('T')[0] === todayStr;
+}
+
+function save() { try { localStorage.setItem('jsdocs30', JSON.stringify(completed)); } catch(e) {} }
+
+function getStreak() {
+  let s = 0;
+  for (let i = 0; i < 30; i++) { if (completed.includes(i)) s++; else break; }
+  return s;
+}
+
+function updateStats() {
+  const d = completed.length;
+  document.getElementById('s-done').textContent = d;
+  document.getElementById('s-streak').textContent = getStreak();
+  document.getElementById('s-pct').textContent = Math.round(d / 30 * 100) + '%';
+  document.getElementById('prog-fill').style.width = (d / 30 * 100) + '%';
+  document.getElementById('prog-label').textContent = d + ' of 30 days complete';
+  const endD = new Date(startDate + 'T00:00:00');
+  endD.setDate(endD.getDate() + 29);
+  document.getElementById('end-date').textContent = 'Finish: ' + endD.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function renderTabs() {
+  const el = document.getElementById('phase-tabs');
+  el.innerHTML = '';
+  ['Phase 1', 'Phase 2', 'Phase 3'].forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'phase-tab' + (i === activePhase ? ' active' : '');
+    btn.textContent = t;
+    btn.onclick = () => { activePhase = i; expandedDay = null; renderTabs(); renderDays(); };
+    el.appendChild(btn);
+  });
+}
+
+function renderDays() {
+  const phase = phases[activePhase];
+  document.getElementById('phase-header').innerHTML = `<p class="phase-title">${phase.title}</p><p class="phase-sub">${phase.subtitle}</p>`;
+  const list = document.getElementById('days-list');
+  list.innerHTML = '';
+
+  phase.days.forEach((day, di) => {
+    const gi = activePhase * 10 + di;
+    const isDone = completed.includes(gi);
+    const isOpen = expandedDay === gi;
+    const dateStr = getDateForDay(gi);
+    const todayMark = isToday(gi) ? '<span class="today-badge">Today</span>' : '';
+
+    const card = document.createElement('div');
+    card.className = 'day-card' + (isDone ? ' done' : '');
+
+    card.innerHTML = `
+      <div class="day-top">
+        <div class="day-num">D${gi + 1}</div>
+        <div class="day-info">
+          <div class="day-title">${day.title}</div>
+          <div class="day-doc">${day.doc}</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap;">
+            <span class="tag tag-read">read</span>
+            <span class="tag tag-build">build</span>
+            <span class="day-date">${dateStr}</span>${todayMark}
+          </div>
+        </div>
+        <button class="expand-btn ${isOpen ? 'open' : ''}">⌄</button>
+        <div class="check-circle">
+          <svg class="check-icon" width="11" height="9" viewBox="0 0 11 9" fill="none">
+            <path d="M1 4.5L4 7.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="day-expanded ${isOpen ? 'open' : ''}">
+        <div class="section-label">Read today</div>
+        <div class="doc-links">
+          ${day.links.map(([label, url]) => `<a class="doc-link" href="${url}" target="_blank" rel="noopener">↗ ${label}</a>`).join('')}
+        </div>
+        <div class="section-label">Build after reading</div>
+        <div class="build-task">${day.build}</div>
+        <button class="mark-btn">${isDone ? 'Mark incomplete' : 'Mark as done ✓'}</button>
+      </div>
+    `;
+
+    card.querySelector('.day-top').addEventListener('click', () => {
+      expandedDay = isOpen ? null : gi;
+      renderDays();
+    });
+
+    card.querySelector('.mark-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (completed.includes(gi)) completed = completed.filter(x => x !== gi);
+      else completed.push(gi);
+      save(); updateStats(); renderDays();
+    });
+
+    list.appendChild(card);
+  });
+}
+
+const dateInput = document.getElementById('start-date');
+dateInput.value = startDate;
+dateInput.addEventListener('change', () => {
+  startDate = dateInput.value;
+  localStorage.setItem('jsdocs30_start', startDate);
+  updateStats();
+  renderDays();
+});
+
+renderTabs();
+renderDays();
+updateStats();
+</script>
+</body>
+</html>
